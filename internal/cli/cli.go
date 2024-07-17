@@ -1,14 +1,13 @@
-package main
+package cli
 
 import (
-	"genlinks/data"
 	"github.com/gorilla/mux"
-	_ "github.com/lib/pq"
+	"github.com/shortener/internal/data"
 	"log"
 	"net/http"
 )
 
-func main() {
+func Run(args []string) bool {
 	r := mux.NewRouter()
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Welcome to the URL shortener!"))
@@ -18,5 +17,10 @@ func main() {
 	r.HandleFunc("/{shortened}", data.RedirectHandler).Methods("GET")
 
 	log.Println("Starting server on :8080")
-	log.Fatal(http.ListenAndServe(":8080", r)) // Передаем маршрутизатор r
+	err := http.ListenAndServe(":8080", r)
+	if err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+		return false
+	}
+	return true
 }
