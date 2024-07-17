@@ -1,4 +1,4 @@
-package main
+package cli
 
 import (
 	"genlinks/internal/data"
@@ -23,8 +23,4 @@ func Run(args []string) bool {
 		return false
 	}
 	return true
-}
-
-func main() {
-	Run(nil)
 }

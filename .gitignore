@@ -1,0 +1,5 @@
+.vscode/
+.idea/
+main.go
+Dockerfile
+docker-compose.yml
