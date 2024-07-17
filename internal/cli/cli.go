@@ -1,8 +1,8 @@
 package cli
 
 import (
-	"genlinks/internal/data"
 	"github.com/gorilla/mux"
+	"github.com/kish1n/genlinks/internal/data"
 	"log"
 	"net/http"
 )
