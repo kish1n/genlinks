@@ -1,8 +1,8 @@
-package cli
+package main
 
 import (
+	"genlinks/internal/data"
 	"github.com/gorilla/mux"
-	"github.com/shortener/internal/data"
 	"log"
 	"net/http"
 )
@@ -23,4 +23,8 @@ func Run(args []string) bool {
 		return false
 	}
 	return true
+}
+
+func main() {
+	Run(nil)
 }
