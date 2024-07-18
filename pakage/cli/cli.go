@@ -2,7 +2,7 @@ package cli
 
 import (
 	"github.com/gorilla/mux"
-	"github.com/kish1n/genlinks/internal/data"
+	"github.com/kish1n/genlinks/pakage/data"
 	"log"
 	"net/http"
 )
