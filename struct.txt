@@ -1,4 +1,0 @@
-internal/config -> Log Copus Listener
-internal/service -> Run
-internal/assets -> Migrations
-
