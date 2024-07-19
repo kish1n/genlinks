@@ -3,19 +3,34 @@ package data
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/lib/pq"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 )
 
 func initDB() (*sql.DB, error) {
-	connStr := fmt.Sprintf("%s:%s@%s:%s:%s?sslmode=disable",
-		os.Getenv("POSTGRES_DB"),
-		os.Getenv("POSTGRES_USER"),
-		os.Getenv("POSTGRES_PASSWORD"),
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_PORT"),
+	// Load environment variables from .env file
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+
+	dbName := os.Getenv("POSTGRES_DB")
+	dbUser := os.Getenv("POSTGRES_USER")
+	dbPassword := os.Getenv("POSTGRES_PASSWORD")
+	dbHost := os.Getenv("DB_HOST")
+	dbPort := os.Getenv("DB_PORT")
+
+	if dbName == "" || dbUser == "" || dbPassword == "" || dbHost == "" || dbPort == "" {
+		return nil, fmt.Errorf("missing one or more environment variables: POSTGRES_DB=%s, POSTGRES_USER=%s, POSTGRES_PASSWORD=%s, DB_HOST=%s, DB_PORT=%s",
+			dbName, dbUser, dbPassword, dbHost, dbPort)
+	}
+
+	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
+		dbUser, dbPassword, dbHost, dbPort, dbName,
 	)
 
 	fmt.Println("connStr: ", connStr)

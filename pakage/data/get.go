@@ -42,7 +42,7 @@ func RedirectHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if original == "" {
-		http.Error(w, "нет такого", http.StatusNotFound)
+		http.Error(w, "Not Found 404", http.StatusNotFound)
 		return
 	}
 
