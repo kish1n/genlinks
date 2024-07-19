@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/kish1n/genlinks/pakage/data"
+	"github.com/kish1n/genlinks/internal/data"
 )
 
 func Run(args []string) bool {
