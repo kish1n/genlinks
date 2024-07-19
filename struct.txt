@@ -1,5 +1,4 @@
 internal/config -> Log Copus Listener
 internal/service -> Run
 internal/assets -> Migrations
-internal/service/handlers
-internal/cli -> Run
+
