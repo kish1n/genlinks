@@ -18,30 +18,23 @@ type AddLinkResponse struct {
 	Shortened string `json:"shortened"`
 }
 
-func generateShortenedURL() string {
-	const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	rand.Seed(time.Now().UnixNano())
-	b := make([]byte, 8)
-	for i := range b {
-		b[i] = letters[rand.Intn(len(letters))]
-	}
-	return string(b)
-}
-
-func addLink(db *sql.DB, original string) (string, error) {
+func AddLink(db *sql.DB, original string) (string, error) {
 	var shortened string
 
+	// Проверяем, существует ли уже сокращенная версия для original
 	err := db.QueryRow("SELECT shortened FROM links WHERE original = $1", original).Scan(&shortened)
 	if err != nil && err != sql.ErrNoRows {
 		return "", fmt.Errorf("error checking existing link: %v", err)
 	}
 
 	if shortened != "" {
-		return shortened, nil
+		return shortened, nil // Если сокращенная версия уже существует, возвращаем её
 	}
 
+	// Генерируем уникальную сокращенную версию
 	shortened = generateShortenedURL()
 
+	// Вставляем новую запись в базу данных
 	_, err = db.Exec("INSERT INTO links (original, shortened) VALUES ($1, $2)", original, shortened)
 	if err != nil {
 		return "", fmt.Errorf("error inserting new link: %v", err)
@@ -65,7 +58,7 @@ func AddLinkHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	shortened, err := addLink(db, req.Original)
+	shortened, err := AddLink(db, req.Original)
 	if err != nil {
 		http.Error(w, "Error adding link", http.StatusInternalServerError)
 		log.Printf("AddLinkHandler: %v", err)
@@ -75,4 +68,14 @@ func AddLinkHandler(w http.ResponseWriter, r *http.Request) {
 	resp := AddLinkResponse{Shortened: shortened}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(resp)
+}
+
+func generateShortenedURL() string {
+	const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	rand.Seed(time.Now().UnixNano())
+	b := make([]byte, 8)
+	for i := range b {
+		b[i] = letters[rand.Intn(len(letters))]
+	}
+	return string(b)
 }

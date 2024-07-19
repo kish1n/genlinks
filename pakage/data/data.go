@@ -3,15 +3,11 @@ package data
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/lib/pq" // Подключение драйвера PostgreSQL
 	"log"
 	"net/http"
-)
 
-type Data struct {
-	Original  string
-	Shortened string
-}
+	_ "github.com/lib/pq"
+)
 
 func initDB() (*sql.DB, error) {
 	connStr := "postgres://postgres:1029@localhost/postgres?sslmode=disable"
@@ -59,5 +55,4 @@ func DBHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Fprintf(w, "Current time: %s", currentTime)
-	log.Println("DBHandler executed successfully")
 }

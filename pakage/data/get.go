@@ -3,12 +3,13 @@ package data
 import (
 	"database/sql"
 	"fmt"
-	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+
+	"github.com/go-chi/chi/v5"
 )
 
-func getLink(db *sql.DB, shortened string) (string, error) {
+func GetLink(db *sql.DB, shortened string) (string, error) {
 	var original string
 
 	err := db.QueryRow("SELECT original FROM links WHERE shortened = $1", shortened).Scan(&original)
@@ -23,8 +24,7 @@ func getLink(db *sql.DB, shortened string) (string, error) {
 }
 
 func RedirectHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	shortened := vars["shortened"]
+	shortened := chi.URLParam(r, "shortened")
 
 	db, err := initDB()
 	if err != nil {
@@ -34,7 +34,7 @@ func RedirectHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	original, err := getLink(db, shortened)
+	original, err := GetLink(db, shortened)
 	if err != nil {
 		http.Error(w, "Error getting link", http.StatusInternalServerError)
 		log.Printf("GetLink: %v", err)
@@ -42,7 +42,7 @@ func RedirectHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if original == "" {
-		http.Error(w, "Error not found links", http.StatusNotFound)
+		http.Error(w, "нет такого", http.StatusNotFound)
 		return
 	}
 

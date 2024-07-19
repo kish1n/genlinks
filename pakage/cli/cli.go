@@ -1,20 +1,21 @@
 package cli
 
 import (
-	"github.com/gorilla/mux"
-	"github.com/kish1n/genlinks/pakage/data"
 	"log"
 	"net/http"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/kish1n/genlinks/pakage/data"
 )
 
 func Run(args []string) bool {
-	r := mux.NewRouter()
-	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	r := chi.NewRouter()
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Welcome to the URL shortener!"))
 	})
-	r.HandleFunc("/db", data.DBHandler)
-	r.HandleFunc("/add", data.AddLinkHandler).Methods("POST")
-	r.HandleFunc("/{shortened}", data.RedirectHandler).Methods("GET")
+	r.Get("/db", data.DBHandler)
+	r.Post("/add", data.AddLinkHandler)
+	r.Get("/{shortened}", data.RedirectHandler)
 
 	log.Println("Starting server on :8080")
 	err := http.ListenAndServe(":8080", r)
