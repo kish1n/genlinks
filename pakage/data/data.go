@@ -5,37 +5,17 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
-	"time"
 
 	_ "github.com/lib/pq"
 )
 
 func initDB() (*sql.DB, error) {
-	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_PORT"),
-		os.Getenv("POSTGRES_USER"),
-		os.Getenv("POSTGRES_PASSWORD"),
-		os.Getenv("POSTGRES_DB"))
+	// Жестко закомментированная строка подключения
+	connStr := "host=db port=5432 user=postgres password=yourpassword dbname=yourdatabase sslmode=disable"
 
 	fmt.Println("connStr: ", connStr)
 
-	var db *sql.DB
-	var err error
-
-	for i := 0; i < 10; i++ {
-		db, err = sql.Open("postgres", connStr)
-		if err == nil {
-			err = db.Ping()
-			if err == nil {
-				break
-			}
-		}
-		log.Println("Failed to connect to database. Retrying in 5 seconds...")
-		time.Sleep(5 * time.Second)
-	}
-
+	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return nil, fmt.Errorf("error opening database: %v", err)
 	}

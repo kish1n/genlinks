@@ -21,20 +21,17 @@ type AddLinkResponse struct {
 func AddLink(db *sql.DB, original string) (string, error) {
 	var shortened string
 
-	// Проверяем, существует ли уже сокращенная версия для original
 	err := db.QueryRow("SELECT shortened FROM links WHERE original = $1", original).Scan(&shortened)
 	if err != nil && err != sql.ErrNoRows {
 		return "", fmt.Errorf("error checking existing link: %v", err)
 	}
 
 	if shortened != "" {
-		return shortened, nil // Если сокращенная версия уже существует, возвращаем её
+		return shortened, nil
 	}
 
-	// Генерируем уникальную сокращенную версию
 	shortened = generateShortenedURL()
 
-	// Вставляем новую запись в базу данных
 	_, err = db.Exec("INSERT INTO links (original, shortened) VALUES ($1, $2)", original, shortened)
 	if err != nil {
 		return "", fmt.Errorf("error inserting new link: %v", err)
