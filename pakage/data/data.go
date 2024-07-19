@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	_ "github.com/lib/pq"
 )
@@ -20,7 +21,21 @@ func initDB() (*sql.DB, error) {
 
 	fmt.Println("connStr: ", connStr)
 
-	db, err := sql.Open("postgres", connStr)
+	var db *sql.DB
+	var err error
+
+	for i := 0; i < 10; i++ {
+		db, err = sql.Open("postgres", connStr)
+		if err == nil {
+			err = db.Ping()
+			if err == nil {
+				break
+			}
+		}
+		log.Println("Failed to connect to database. Retrying in 5 seconds...")
+		time.Sleep(5 * time.Second)
+	}
+
 	if err != nil {
 		return nil, fmt.Errorf("error opening database: %v", err)
 	}
