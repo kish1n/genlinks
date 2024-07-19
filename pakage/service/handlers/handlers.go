@@ -2,24 +2,15 @@ package handlers
 
 import (
 	"context"
-	"log"
-	"os"
+	"gitlab.com/distributed_lab/logan/v3"
 )
 
-// Определение ключа для хранения логгера в контексте
-type ctxKeyLog struct{}
+type ctxKey int
 
-// CtxLog возвращает функцию, добавляющую логгер в контекст
-func CtxLog(log *log.Logger) func(context.Context) context.Context {
+const logCtxKey ctxKey = iota
+
+func CtxLog(entry *logan.Entry) func(context.Context) context.Context {
 	return func(ctx context.Context) context.Context {
-		return context.WithValue(ctx, ctxKeyLog{}, log)
+		return context.WithValue(ctx, logCtxKey, entry)
 	}
-}
-
-// LogFromCtx извлекает логгер из контекста
-func LogFromCtx(ctx context.Context) *log.Logger {
-	if log, ok := ctx.Value(ctxKeyLog{}).(*log.Logger); ok {
-		return log
-	}
-	return log.New(os.Stdout, "default: ", log.LstdFlags)
 }
