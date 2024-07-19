@@ -1,7 +1,9 @@
 package service
 
-import "context"
+import (
+	service "github.com/kish1n/genlinks/pakage/config"
+)
 
-type Service interface {
-	Run(ctx context.Context) error
+func Run(cfg service.Config) {
+	print("Servise started TODO")
 }
