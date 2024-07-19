@@ -3,15 +3,20 @@ package data
 import (
 	"database/sql"
 	"fmt"
+	_ "github.com/lib/pq"
 	"log"
 	"net/http"
-
-	_ "github.com/lib/pq"
+	"os"
 )
 
 func initDB() (*sql.DB, error) {
-	// Жестко закомментированная строка подключения
-	connStr := "host=db port=5432 user=postgres password=yourpassword dbname=yourdatabase sslmode=disable"
+	connStr := fmt.Sprintf("%s:%s@%s:%s:%s?sslmode=disable",
+		os.Getenv("POSTGRES_DB"),
+		os.Getenv("POSTGRES_USER"),
+		os.Getenv("POSTGRES_PASSWORD"),
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_PORT"),
+	)
 
 	fmt.Println("connStr: ", connStr)
 
